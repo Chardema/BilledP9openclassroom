@@ -14,7 +14,6 @@ export const filteredBills = (data, status) => {
         if (typeof jest !== "undefined") {
           selectCondition = bill.status === status;
         } else {
-          /* istanbul ignore next */
           // in prod environment
           const userEmail = JSON.parse(localStorage.getItem("user")).email;
           selectCondition = bill.status === status && ![...USERS_TEST, userEmail].includes(bill.email);
@@ -169,7 +168,6 @@ export default class {
   };
 
   // not need to cover this function by tests
-  /* istanbul ignore next */
   updateBill = (bill) => {
     if (this.store) {
       return this.store
