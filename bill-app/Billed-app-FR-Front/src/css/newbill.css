@@ -65,14 +65,3 @@ select:focus {
 *[placeholder] {
   color: #0e5ae5 !important;
 }
-
-.hideErrorMessage {
-  display: none;
-}
-
-#errorFileType,
-#errorExpenseName {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  color: red;
-}

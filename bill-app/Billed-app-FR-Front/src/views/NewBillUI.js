@@ -37,7 +37,7 @@ export default () => {
                     <input required type="number" class="form-control blue-border input-icon input-icon-right" data-testid="amount" placeholder="348"/>
                   </div>
                   <div class="col-half-row">
-                    <div class="flex-col"> 
+                    <div class="flex-col">
                       <label for="vat" class="bold-label">TVA</label>
                       <input type="number" class="form-control blue-border" data-testid="vat" placeholder="70" />
                     </div>
@@ -54,15 +54,14 @@ export default () => {
                   </div>
                   <div class="col-half">
                     <label for="file" class="bold-label">Justificatif</label>
-                    <input required type="file" class="form-control blue-border" data-testid="file"/>
-                    <div class="hideErrorMessage" id="errorFileType" data-testid="errorFile">Le justificatif à fournir doit être au format "jpg", "jpeg" ou "png".</div>
+                    <input required type="file" accept="image/jpeg, image/png" class="form-control blue-border" data-testid="file" />
                   </div>
                 </div>
             </div>
             <div class="row">
               <div class="col-md-6">
                 <div class="col-half">
-                  <button type="submit" id='btn-send-bill' class="btn btn-primary">Envoyer</button>
+                  <button   type="submit" id='btn-send-bill' class="btn btn-primary">Envoyer</button>
                 </div>
               </div>
             </div>

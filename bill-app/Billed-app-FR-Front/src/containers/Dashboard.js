@@ -16,7 +16,9 @@ export const filteredBills = (data, status) => {
         } else {
           // in prod environment
           const userEmail = JSON.parse(localStorage.getItem("user")).email;
-          selectCondition = bill.status === status && ![...USERS_TEST, userEmail].includes(bill.email);
+          selectCondition =
+            bill.status === status &&
+            ![...USERS_TEST, userEmail].includes(bill.email);
         }
 
         return selectCondition;
@@ -26,11 +28,17 @@ export const filteredBills = (data, status) => {
 
 export const card = (bill) => {
   const firstAndLastNames = bill.email.split("@")[0];
-  const firstName = firstAndLastNames.includes(".") ? firstAndLastNames.split(".")[0] : "";
-  const lastName = firstAndLastNames.includes(".") ? firstAndLastNames.split(".")[1] : firstAndLastNames;
+  const firstName = firstAndLastNames.includes(".")
+    ? firstAndLastNames.split(".")[0]
+    : "";
+  const lastName = firstAndLastNames.includes(".")
+    ? firstAndLastNames.split(".")[1]
+    : firstAndLastNames;
 
   return `
-    <div class='bill-card' id='open-bill${bill.id}' data-testid='open-bill${bill.id}'>
+    <div class='bill-card' id='open-bill${bill.id}' data-testid='open-bill${
+    bill.id
+  }'>
       <div class='bill-card-name-container'>
         <div class='bill-card-name'> ${firstName} ${lastName} </div>
         <span class='bill-card-grey'> ... </span>
@@ -67,9 +75,12 @@ export default class {
     this.document = document;
     this.onNavigate = onNavigate;
     this.store = store;
+
     $("#arrow-icon1").click((e) => this.handleShowTickets(e, bills, 1));
     $("#arrow-icon2").click((e) => this.handleShowTickets(e, bills, 2));
     $("#arrow-icon3").click((e) => this.handleShowTickets(e, bills, 3));
+
+    this.getBillsAllUsers();
     new Logout({ localStorage, onNavigate });
   }
 
@@ -78,14 +89,25 @@ export default class {
     const imgWidth = Math.floor($("#modaleFileAdmin1").width() * 0.8);
     $("#modaleFileAdmin1")
       .find(".modal-body")
-      .html(`<div style='text-align: center;'><img width=${imgWidth} src=${billUrl} alt="Bill"/></div>`);
-    if (typeof $("#modaleFileAdmin1").modal === "function") $("#modaleFileAdmin1").modal("show");
+      .html(
+        `<div style='text-align: center;'><img width=${imgWidth} src=${billUrl} /></div>`
+      );
+    if (typeof $("#modaleFileAdmin1").modal === "function")
+      $("#modaleFileAdmin1").modal("show");
   };
 
   handleEditTicket(e, bill, bills) {
-    if (this.counter === undefined || this.id !== bill.id) this.counter = 0;
-    if (this.id === undefined || this.id !== bill.id) this.id = bill.id;
+    if (this.counter === undefined || this.id !== bill.id) {
+      // console.log("counter === undefined || this.id !== bill.id");
+      this.counter = 0;
+    }
+    if (this.id === undefined || this.id !== bill.id) {
+      // console.log("this.id === undefined || this.id !== bill.id");
+      this.id = bill.id;
+    }
+    // console.log('% = '+ this.counter)
     if (this.counter % 2 === 0) {
+      // console.log(this.id)
       bills.forEach((b) => {
         $(`#open-bill${b.id}`).css({ background: "#0D5AE5" });
       });
@@ -94,10 +116,11 @@ export default class {
       $(".vertical-navbar").css({ height: "150vh" });
       this.counter++;
     } else {
+      // console.log(this.id)
       $(`#open-bill${bill.id}`).css({ background: "#0D5AE5" });
 
       $(".dashboard-right-container div").html(`
-        <div id="big-billed-icon" data-testid="big-billed-icon"> ${BigBilledIcon} </div>
+        <div id="big-billed-icon"> ${BigBilledIcon} </div>
       `);
       $(".vertical-navbar").css({ height: "120vh" });
       this.counter++;
@@ -128,11 +151,29 @@ export default class {
   };
 
   handleShowTickets(e, bills, index) {
+    // changes here ->
+    bills.forEach((bill) => {
+      //console.log(bill);
+      // .off Remove an event handler.
+
+      // you want to remove the first of those event listeners, the one that fires doSomething. How do you do that?
+
+      // $("#element").off("click");
+
+      $(`#open-bill${bill.id}`).off("click");
+    });
+    //----------------
+
     if (this.counter === undefined || this.index !== index) this.counter = 0;
-    if (this.index === undefined || this.index !== index) this.index = index;
+    if (this.index === undefined || this.index !== index) {
+      this.index = index;
+      // this.counter = 0
+    }
     if (this.counter % 2 === 0) {
       $(`#arrow-icon${this.index}`).css({ transform: "rotate(0deg)" });
-      $(`#status-bills-container${this.index}`).html(cards(filteredBills(bills, getStatus(this.index))));
+      $(`#status-bills-container${this.index}`).html(
+        cards(filteredBills(bills, getStatus(this.index)))
+      );
       this.counter++;
     } else {
       $(`#arrow-icon${this.index}`).css({ transform: "rotate(90deg)" });
@@ -140,12 +181,27 @@ export default class {
       this.counter++;
     }
 
-    filteredBills(bills, getStatus(this.index)).forEach(bill => {
-      $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
-  })
+
+    // https://api.jquery.com/event.namespace/
+    //https://css-tricks.com/namespaced-events-jquery/
+    //   $("#element")
+    // .on("click.myNamespace", function() {
+    //    console.log("doSomething");
+    //  });
+
+    bills.forEach((bill) => {
+      $(`#open-bill${bill.id}`).click("click.mynamespace", (e) => {
+        //debugger;
+        //console.log(e);
+        this.handleEditTicket(e, bill, bills);
+      });
+    });
+
     return bills;
   }
-
+  
+   /*istanbul ignore next*/
+  // not need to cover this function by tests
   getBillsAllUsers = () => {
     if (this.store) {
       return this.store
@@ -160,9 +216,7 @@ export default class {
           }));
           return bills;
         })
-        .catch((error) => {
-          throw error;
-        });
+        .catch(console.log);
     }
   };
 

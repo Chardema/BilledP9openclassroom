@@ -19,13 +19,21 @@ const row = (bill) => {
     `;
 };
 
+// architecture MVC model view controllers BUG.1
 const rows = (data) => {
-  return data && data.length ? data.map((bill) => row(bill)).join("") : "";
+  const sortedDataByDate =
+    data && data.length > 0
+      ? data.sort((a, b) => new Date(b.date) - new Date(a.date))
+      : "";
+
+  return data && data.length
+    ? sortedDataByDate.map((bill) => row(bill)).join("")
+    : "";
 };
 
 export default ({ data: bills, loading, error }) => {
   const modal = () => `
-    <div class="modal fade" id="modaleFile" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="modaleFile" data-testid="modaleFileEmploee" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -46,7 +54,7 @@ export default ({ data: bills, loading, error }) => {
   } else if (error) {
     return ErrorPage(error);
   }
-  // console.log(bills);
+
   return `
     <div class='layout'>
       ${VerticalLayout(120)}
@@ -68,13 +76,7 @@ export default ({ data: bills, loading, error }) => {
               </tr>
           </thead>
           <tbody data-testid="tbody">
-            ${rows(
-              (bills || []).sort((a, b) => {
-                const dateA = new Date(a.date);
-                const dateB = new Date(b.date);
-                return dateA > dateB ? -1 : 1;
-              })
-            )}
+            ${rows(bills)}
           </tbody>
           </table>
         </div>

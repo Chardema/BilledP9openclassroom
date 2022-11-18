@@ -69,6 +69,9 @@ export default class Login {
       });
   };
 
+  /* istanbul ignore next */
+  //--------------
+
   // not need to cover this function by tests
   login = (user) => {
     if (this.store) {
@@ -87,6 +90,8 @@ export default class Login {
     }
   };
   
+   /*istanbul ignore next*/
+  // not need to cover this function by tests
   createUser = (user) => {
     if (this.store) {
       return this.store
